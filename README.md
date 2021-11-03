@@ -9,6 +9,8 @@ Our example will export spans data simultaneously on `Console` and [Jaeger](http
 ```sh
 # from this directory
 npm install
+
+npm i tsyringe @opentelemetry/api @opentelemetry/resources @opentelemetry/semantic-conventions @opentelemetry/sdk-trace-base @opentelemetry/exporter-jaeger
 ```
 
 (Optional) Setup [Jaeger Tracing](https://www.jaegertracing.io/docs/latest/getting-started/#all-in-one): needs to be running on `localhost` port `16686`.

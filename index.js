@@ -1,27 +1,27 @@
-const {
-  JaegerClass,
-} = require("/home/iyan/PUC/estágio/Luby/test/basic-tracer-node/tracing/jaegerDomain.js");
-const opentelemetry = require("@opentelemetry/api");
-const { Resource } = require("@opentelemetry/resources");
-const {
-  SemanticResourceAttributes,
-} = require("@opentelemetry/semantic-conventions");
-const {
-  BasicTracerProvider,
-  ConsoleSpanExporter,
-  SimpleSpanProcessor,
-} = require("@opentelemetry/sdk-trace-base");
-const { JaegerExporter } = require("@opentelemetry/exporter-jaeger");
+const { JaegerClass } = require('./tracing/jaegerDomain');
+const jaeger = new JaegerClass('Jaeger Test Local');
+const parentSpanCreated = jaeger.createParentSpan('PaymentProcesss', true);
 
-let jaeger = new JaegerClass();
+// const jaeger = require('./tracing/jaegerDomain')
+// jaeger.createParentSpan('PaymentProcesss', true);
+
+const other = require('./tracing/otherThing')
 
 for (let i = 0; i < 10; i += 1) {
-  jaeger.createParentSpan("doWork", true);
-  doWork();
+  if (i === 3) {
+    other.otherFunction(jaeger)
+  } else if (i === 5) {
+    console.log('AAAAAAA',parentSpanCreated)
+    jaeger.SendErrorSpan(`Error: Test for ${i}`, parentSpanCreated, `Error: Mensagem aquiiii ${i}`);
+  } else {
+    jaeger.SendSpan(`OK: Test for ${i}`, false, `Mensagem aquiiii ${i}`);
+  }
 }
-// Be sure to end the span.
 
-function doWork() {
-  jaeger.SendSpan("doWorkInner", true);
-  jaeger.SendErrorSpan("doWorkError", this.span, "error");
+jaeger.SendSpan('OK: Test for Finalizando', true, 'Finalizando a parada');
+
+//Test
+function testThowErrorAndAcert() {
+  jaeger.SendSpan('LocaldoWorkInner', true);
+  jaeger.SendErrorSpan('LocaldoWorkError', this.span, 'error');
 }
