@@ -18,18 +18,19 @@ const provider = new BasicTracerProvider({
     [SemanticResourceAttributes.SERVICE_NAME]: "basic-service",
   }),
 });
+let jaeger = new JaegerClass(provider);
 
 for (let i = 0; i < 10; i += 1) {
-  JaegerClass.createParentSpan("doWork", true);
+  jaeger.createParentSpan("doWork", true);
   doWork();
 }
 // Be sure to end the span.
 
 function doWork() {
-  JaegerClass.SendSpan("doWorkInner", true);
+  jaeger.SendSpan("doWorkInner", true);
   for (let i = 0; i <= Math.floor(Math.random() * 40000000); i += 1) {
     if (i > 10000) {
-      JaegerClass.SendErrorSpan("insertBankAccount", span, "error");
+      jaeger.SendErrorSpan("insertBankAccount", span, "error");
     }
   }
 }

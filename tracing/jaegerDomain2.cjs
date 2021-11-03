@@ -10,7 +10,7 @@ const {
 } = require("@opentelemetry/sdk-trace-base");
 const { JaegerExporter } = require("@opentelemetry/exporter-jaeger");
 
-class JaegerClass {
+module.exports = class JaegerClass {
   constructor(provider) {
     let span = [];
     this.provider = provider;
@@ -36,72 +36,82 @@ class JaegerClass {
   }
   FinishSpans(spans) {
     spans.forEach((span) => span.end());
-    if (this.exporter != null) {
-      this.exporter.shutdown();
-    }
+    if (this.exporter != null){ this.exporter.shutdown(); }
   }
-  startSpan(tracer, spanName, hasparentspan) {
-    const exporter = this.exporter;
+   startSpan(
+    tracer,
+    spanName,
+    hasparentspan,
+  ) {
+     const exporter = this.exporter
     if (hasparentspan) {
       const ctx = opentelemetry.trace.setSpan(
         opentelemetry.context.active(),
         this.spans[this.spans.length - 1]
-      );
-      const span = tracer.startSpan(spanName, undefined, ctx);
+      )
+      const span = tracer.startSpan(spanName, undefined, ctx)
       span.setStatus({
         code: SpanStatusCode.OK,
-        message: "ok",
-      });
-      this.spans.push(span);
-      return span;
+        message: 'ok'
+      })
+      this.spans.push(span)
+      return span
     }
-    const span = tracer.startSpan(spanName);
-    this.spans.push(span);
-    exporter.shutdown();
-    return span;
+    const span = tracer.startSpan(spanName)
+    this.spans.push(span)
+    exporter.shutdown()
+    return span
   }
   createParentSpan(spanName, hasparentspan) {
-    this.setExporter();
-    const tracer = opentelemetry.trace.getTracer("NomeDoServiço_tracer");
-    return this.startSpan(tracer, spanName, hasparentspan);
+    this.setExporter()
+    const tracer = opentelemetry.trace.getTracer('NomeDoServiço_tracer')
+    return this.startSpan(tracer, spanName, hasparentspan)
   }
-  SendSpan(spanName, endAll, message, tracerName) {
-    const exporter = this.setExporter();
+  SendSpan(
+    spanName,
+    endAll,
+    message,
+    tracerName
+  ) {
+    const exporter = this.setExporter()
     const tracer = opentelemetry.trace.getTracer(
-      tracerName ? tracerName : "NomeDoServiço_tracer"
-    );
-    const span = this.startSpan(tracer, spanName, true);
+      tracerName ? tracerName : 'NomeDoServiço_tracer'
+    )
+    const span = this.startSpan(tracer, spanName, true)
     span.setStatus({
       code: SpanStatusCode.OK,
-      message: message ? message : "ok",
-    });
+      message: message ? message : 'ok'
+    })
     if (endAll) {
-      this.FinishSpans(this.spans);
+      this.FinishSpans(this.spans)
     }
-    exporter.shutdown();
-    return span;
+    exporter.shutdown()
+    return span
   }
-  SendErrorSpan(spanName, parentSpan, message, tracerName) {
-    const exporter = this.setExporter();
+  SendErrorSpan(
+    spanName,
+    parentSpan,
+    message,
+    tracerName
+  ) {
+    const exporter = this.setExporter()
     const tracer = opentelemetry.trace.getTracer(
-      tracerName ? tracerName : "NomeDoServiço_tracer"
-    );
+      tracerName ? tracerName : 'NomeDoServiço_tracer'
+    )
     const ctx = opentelemetry.trace.setSpan(
       opentelemetry.context.active(),
       parentSpan
-    );
-    const span = tracer.startSpan(spanName, undefined, ctx);
-
+    )
+    const span = tracer.startSpan(spanName, undefined, ctx)
+ 
     span.setStatus({
       code: SpanStatusCode.ERROR,
-      message: this.handleMessage(message),
-    });
-    span.end();
-
-    parentSpan.end();
-    exporter.shutdown();
-    return;
+      message: this.handleMessage(message)
+    })
+    span.end()
+ 
+    parentSpan.end()
+    exporter.shutdown()
+    return
   }
 }
-
-module.exports.JaegerClass = JaegerClass;
