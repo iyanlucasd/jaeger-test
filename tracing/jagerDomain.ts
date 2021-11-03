@@ -12,7 +12,7 @@ import {
 import { JaegerExporter } from '@opentelemetry/exporter-jaeger'
 
 @injectable()
-export class JaegerDomain {
+export class JaegerClass {
  private spans: Span[] = []
  private exporter: JaegerExporter | undefined = undefined
 
