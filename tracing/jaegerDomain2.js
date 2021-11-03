@@ -10,35 +10,27 @@ const {
 } = require("@opentelemetry/sdk-trace-base");
 const { JaegerExporter } = require("@opentelemetry/exporter-jaeger");
 
-var JaegerClass = function (provider) {
-  (this.span = []),
-    (this.provider = provider),
-    (this.exporter = new JaegerExporter({
-      // Refactor this later
-      endpoint: "http://52.52.54.220:14268/api/traces",
-    }));
-  provider.addSpanProcessor(new SimpleSpanProcessor(this.exporter));
-  provider.addSpanProcessor(new SimpleSpanProcessor(new ConsoleSpanExporter()));
-  provider.register();
-
-  (this.setExporter = function () {
-    const provider = new BasicTracerProvider({
-      resource: new Resource({
-        [SemanticResourceAttributes.SERVICE_NAME]: "teste_doc",
-      }),
-    });
-    const exporter = new JaegerExporter({
-      // Refactor this later
-      endpoint: "http://52.52.54.220:14268/api/traces",
-    });
-    provider.addSpanProcessor(new SimpleSpanProcessor(exporter));
-    provider.addSpanProcessor(
-      new SimpleSpanProcessor(new ConsoleSpanExporter())
-    );
-    provider.register();
-    this.exporter = exporter;
-    return exporter;
-  }),
+var JaegerClass = function () {
+  (this.spans = []),
+    (this.exporter = undefined),
+    (this.setExporter = function () {
+      const provider = new BasicTracerProvider({
+        resource: new Resource({
+          [SemanticResourceAttributes.SERVICE_NAME]: "teste_doc",
+        }),
+      });
+      const exporter = new JaegerExporter({
+        // Refactor this later
+        endpoint: "http://52.52.54.220:14268/api/traces",
+      });
+      provider.addSpanProcessor(new SimpleSpanProcessor(exporter));
+      provider.addSpanProcessor(
+        new SimpleSpanProcessor(new ConsoleSpanExporter())
+      );
+      provider.register();
+      this.exporter = exporter;
+      return exporter;
+    }),
     (this.handleMessage = function (message) {
       if (typeof message !== "string") {
         const readyMessage = message.toString();
@@ -61,7 +53,6 @@ var JaegerClass = function (provider) {
         );
         const span = tracer.startSpan(spanName, undefined, ctx);
         span.setStatus({
-          code: SpanStatusCode.OK,
           message: "ok",
         });
         this.spans.push(span);
@@ -79,7 +70,6 @@ var JaegerClass = function (provider) {
       );
       const span = this.startSpan(tracer, spanName, true);
       span.setStatus({
-        code: SpanStatusCode.OK,
         message: message ? message : "ok",
       });
       if (endAll) {
@@ -100,12 +90,10 @@ var JaegerClass = function (provider) {
       const span = tracer.startSpan(spanName, undefined, ctx);
 
       span.setStatus({
-        code: SpanStatusCode.ERROR,
         message: this.handleMessage(message),
       });
       span.end();
 
-      parentSpan.end();
       exporter.shutdown();
       return;
     }),

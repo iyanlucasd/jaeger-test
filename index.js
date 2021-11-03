@@ -1,6 +1,6 @@
 const {
   JaegerClass,
-} = require("/home/iyan/PUC/estágio/Luby/test/basic-tracer-node/tracing/jaegerDomain2.cjs");
+} = require("/home/iyan/PUC/estágio/Luby/test/basic-tracer-node/tracing/jaegerDomain2.js");
 const opentelemetry = require("@opentelemetry/api");
 const { Resource } = require("@opentelemetry/resources");
 const {
@@ -13,12 +13,7 @@ const {
 } = require("@opentelemetry/sdk-trace-base");
 const { JaegerExporter } = require("@opentelemetry/exporter-jaeger");
 
-const provider = new BasicTracerProvider({
-  resource: new Resource({
-    [SemanticResourceAttributes.SERVICE_NAME]: "basic-service",
-  }),
-});
-let jaeger = new JaegerClass(provider);
+let jaeger = new JaegerClass();
 
 for (let i = 0; i < 10; i += 1) {
   jaeger.createParentSpan("doWork", true);
@@ -28,9 +23,5 @@ for (let i = 0; i < 10; i += 1) {
 
 function doWork() {
   jaeger.SendSpan("doWorkInner", true);
-  for (let i = 0; i <= Math.floor(Math.random() * 40000000); i += 1) {
-    if (i > 10000) {
-      jaeger.SendErrorSpan("insertBankAccount", span, "error");
-    }
-  }
+  jaeger.SendErrorSpan("doWorkError", this.span, "error");
 }

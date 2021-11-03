@@ -23,7 +23,7 @@
   "bugs": {
     "url": "https://github.com/open-telemetry/opentelemetry-js/issues"
   },
-  "type": "module",
+
   "dependencies": {
     "@opentelemetry/api": "^1.0.2",
     "@opentelemetry/exporter-jaeger": "0.25.0",
