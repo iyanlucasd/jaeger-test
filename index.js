@@ -1,6 +1,6 @@
 const {
   JaegerClass,
-} = require("/home/iyan/PUC/estágio/Luby/test/basic-tracer-node/tracing/jaegerDomain2.js");
+} = require("/home/iyan/PUC/estágio/Luby/test/basic-tracer-node/tracing/jaegerDomain.js");
 const opentelemetry = require("@opentelemetry/api");
 const { Resource } = require("@opentelemetry/resources");
 const {
