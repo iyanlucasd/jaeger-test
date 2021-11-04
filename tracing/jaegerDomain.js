@@ -56,6 +56,7 @@ var JaegerClass = function (jaegerName) {
         );
         const span = tracer.startSpan(spanName, undefined, ctx);
         span.setStatus({
+          code: opentelemetry.SpanStatusCode.OK,
           message: 'ok',
         });
         this.spans.push(span);
@@ -89,6 +90,7 @@ var JaegerClass = function (jaegerName) {
       const span = tracer.startSpan(spanName, undefined, ctx);
 
       span.setStatus({
+        code: opentelemetry.SpanStatusCode.ERROR,
         message: this.handleMessage(message),
       });
       span.end();
