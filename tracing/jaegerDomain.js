@@ -10,7 +10,8 @@ const {
 } = require('@opentelemetry/sdk-trace-base');
 const { JaegerExporter } = require('@opentelemetry/exporter-jaeger');
 
-const endpointUrl = 'http://52.52.54.220:14268/api/traces';
+// const endpointUrl = 'http://52.52.54.220:14268/api/traces';
+const endpointUrl = 'https://jaeger.collector.dev.luby.com.br/api/traces'; //admin:Luby2121!@
 const tracerServiceName = 'PaymentApi';
 
 var JaegerClass = function (jaegerName) {
@@ -25,6 +26,8 @@ var JaegerClass = function (jaegerName) {
       const exporter = new JaegerExporter({
         // Refactor this later
         endpoint: endpointUrl,
+        username: 'admin',
+        password: 'Luby2121!'
       });
       provider.addSpanProcessor(new SimpleSpanProcessor(exporter));
       provider.addSpanProcessor(

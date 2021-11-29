@@ -10,6 +10,7 @@ const other = require('./tracing/otherThing')
 for (let i = 0; i < 10; i += 1) {
   if (i === 3) {
     other.otherFunction(jaeger)
+    // jaeger.log({'event': 'Teste de busca em outra função!'})
   } else if (i === 5) {
     console.log('AAAAAAA',parentSpanCreated)
     jaeger.SendErrorSpan(`Error: Test for ${i}`, parentSpanCreated, `Error: Mensagem aquiiii ${i}`);
